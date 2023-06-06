@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+</head>
+<body>
+    <h1>Chatbot</h1>
+    <div id="chat-log"></div>
+    <input id="user-input" type="text" placeholder="Type your message">
+    <button id="send-btn">Send</button>
+
+    <script>
+        const sendButton = document.getElementById('send-btn');
+        const userInput = document.getElementById('user-input');
+        const chatLog = document.getElementById('chat-log');
+
+        sendButton.addEventListener('click', () => {
+            const message = userInput.value;
+            if (message.trim() !== '') {
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `user_input=${encodeURIComponent(message)}`
+                })
+                .then(response => response.text())
+                .then(data => {
+                    const chatMessage = document.createElement('div');
+                    chatMessage.innerHTML = `<strong>You:</strong> ${message}<br><strong>Bot:</strong> ${data}<br><br>`;
+                    chatLog.appendChild(chatMessage);
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                });
+            }
+            userInput.value = '';
+        });
+    </script>
+</body>
+</html>
